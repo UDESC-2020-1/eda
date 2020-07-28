@@ -2,22 +2,35 @@
 #include <stdio.h>
 #include "vector.h"
 #include "circular.h"
+#include "sort.h"
 
 int main() {
-  circular *c = circular_create();
+  // Apenas um número primo qualquer
+  const int s = 727;
 
-  circular_push_back(c, 10);
-  circular_push_back(c, 20);
-  circular_push_back(c, 30);
+  int v[s];
 
-  circular_pop_back(c);
-  circular_pop_back(c);
+  for(int i = 0; i < s; i++) {
+    v[i] = rand() % 1000;
+  }
 
-  circular_push_back(c, 40);
-  circular_push_back(c, 50);
-  circular_push_back(c, 60);
+  bubble_sort(v, s);
 
-  circular_delete(c);
+  printf("v = {");
+  for(int i = 0; i < s; i++) {
+    printf(" %d", v[i]);
+  }
+  printf(" }\n");
+
+  for(int i = 0; i < s; i++) {
+    // Garante que deu bom
+    if(binary_search(v, s, v[i])) {
+      printf("%d existe em v!\n", v[i]);
+    } else {
+      printf("Deu ruim!");
+      return EXIT_FAILURE;
+    }
+  }
 
   return EXIT_SUCCESS;
 }
