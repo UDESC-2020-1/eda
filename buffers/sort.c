@@ -57,7 +57,7 @@ void selection_sort(int *v, int n) {
 }
 
 void insertion_sort(int *v, int n) {
-  int key;
+  int key; 
   for (int i = 1; i < n; i++) {
     key = v[i];
     int j = i - 1;
