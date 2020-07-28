@@ -6,7 +6,7 @@
 
 int main() {
   // Apenas um número primo qualquer
-  const int s = 727;
+  const int s = 15;
 
   int v[s];
 
@@ -14,7 +14,7 @@ int main() {
     v[i] = rand() % 1000;
   }
 
-  bubble_sort(v, s);
+  insertion_sort(v, s);
 
   printf("v = {");
   for(int i = 0; i < s; i++) {
