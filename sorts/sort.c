@@ -36,9 +36,27 @@ void bubble_sort(int *v, int n) {
 }
 
 void selection_sort(int *v, int n) {
-
+  for (int i=0; i<n; i++){
+    int min = i;
+    for (int j=i+1; j<n; j++){
+      if (v[j] < v[min]) min = j;
+    }
+    if (min!=i) swap(&v[i], &v[min]);
+  }
 }
 
 void insertion_sort(int *v, int n) {
+  for (int i=1; i<n; i++){
+    int j = i;
+    while (j>0 && v[j-1]>v[j]){
+      swap(&v[j], &v[j-1]);
+      j--;
+    }
+  }
+}
 
+void swap(int *a, int *b){
+  int aux = *a;
+  *a = *b;
+  *b = aux;
 }
