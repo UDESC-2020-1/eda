@@ -51,5 +51,13 @@ int main() {
   }
   printf("\n");
 
+  printf("Depois de sortar: \n");
+  heapsort(v,s);
+  printf("Vetor:\n");
+  for(int i = 0; i < s; i++) {
+    printf("%4d", v[i]);
+  }
+  printf("\n");
+
   return EXIT_SUCCESS;
 }
