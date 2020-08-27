@@ -2,30 +2,35 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <assert.h>
 #include "vector.h"
 #include "sort.h"
 #include "heap.h"
 
-int main() {
+static void verify_heap_property(int *v, int n, int i) {
+  int l = leftof(i);
+  int r = rightof(i);
 
-  const int s = 31;
-  int v[s];
+  assert(parentof(l) == i);
+  assert(parentof(r) == i);
 
-  // Inicia o vetor com valores aleatórios
-  srand(time(NULL));
-  for(int i = 0; i < s; i++) {
-    v[i] = rand() % 1000;
+  if(l < n) {
+    assert(v[i] >= v[l]);
+    verify_heap_property(v, n, l);
   }
 
-  // Reordena o vetor para que ele tenha a propriedade de heap!
-  make_heap(v, s);
+  if(r < n) {
+    assert(v[i] >= v[r]);
+    verify_heap_property(v, n, r);
+  }
+}
 
-  // Vamos imprimir e verificar o que fizemos...
+static void print_heap_as_tree(int *v, int s) {
   int x = 0;
   int max = 4 * pow(2, (int)floor(log2(s)));
   int itens, used, spacing;
 
-  printf("Vetor:\n");
+  printf("Vetor (tamanho = %d):\n", s);
   for(int i = 0; i < s; i++) {
     if((i & (i + 1)) == 0) {
       if(i) printf("\n");
@@ -39,17 +44,32 @@ int main() {
     for(int j = 0; j < spacing; j++) printf(" ");
     printf("%4d", v[i]);
     for(int j = 0; j < spacing; j++) printf(" ");
-
-    // Verifica se fizemos tudo direito!
-    int l = leftof(i);
-    int r = rightof(i);
-
-    if((l < s && v[l] > v[i]) || (r < s && v[r] > v[i])) {
-      printf("Tem um bug aqui!\n");
-      return EXIT_FAILURE;
-    }
   }
   printf("\n");
+}
+
+int main() {
+
+  int s = 31;
+  int v[s];
+
+  // Inicia o vetor com valores aleatórios
+  srand(time(NULL));
+  for(int i = 0; i < s; i++) {
+    // i = tamanho até agora
+    print_heap_as_tree(v, i);
+    heap_push(v, i, rand() % 1000);
+    verify_heap_property(v, i, 0);
+  }
+
+  print_heap_as_tree(v, s);
+
+  while(s) {
+    int max = heap_pop(v, s--);
+    printf("Valor máximo: %d\n", max);
+    print_heap_as_tree(v, s);
+    verify_heap_property(v, s, 0);
+  }
 
   return EXIT_SUCCESS;
 }
