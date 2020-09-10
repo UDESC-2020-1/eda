@@ -4,6 +4,7 @@
 
 typedef struct node {
   int key;
+  int value;
   struct node *left;
   struct node *right;
 } node;
@@ -30,7 +31,7 @@ static void node_show(node *n) {
       node_show(n->left);
       printf(" ");
     }
-    printf("%d ", n->key);
+    printf("%d:%d ", n->key, n->value);
     if(n->right) {
       node_show(n->right);
       printf(" ");
@@ -46,70 +47,72 @@ void tree_show(tree *t) {
 
 // Se o valor "k" já existir, retornamos o n que recebemos de argumento
 // Caso contrário, retornamos um novo nó alocado na memória
-static node *node_insert(node *n, int k) {
+static node *node_insert(node *n, int k, int v) {
   if(n != NULL) {
     // Essa chave já existe?
     if(n->key == k) {
-      // Não inserimos de novo, apenas retornamos!
+      // Não inserimos de novo, mas atualizamos o valor!
+      n->value = v;
       return n;
     }
 
     // Continuamos procurando!
     if(k < n->key) {
-      n->left = node_insert(n->left, k);
+      n->left = node_insert(n->left, k, v);
       return n;
     } else {
-      n->right = node_insert(n->right, k);
+      n->right = node_insert(n->right, k, v);
       return n;
     }
   } else {
     // Aloca um novo valor, a chave ainda não existia!
     n = malloc(sizeof(node));
     n->key = k;
+    n->value = v;
     n->left = NULL;
     n->right = NULL;
     return n;
   }
 }
 
-void tree_insert(tree *t, int k) {
+void tree_insert(tree *t, int k, int v) {
   // Inserir a chave "k" na árvore, caso ela já não exista!
-  t->root = node_insert(t->root, k);
+  t->root = node_insert(t->root, k, v);
 }
 
-static void node_preorder(node *n, void (*f)(int)) {
+static void node_preorder(node *n, void (*f)(int, int)) {
   if(n) {
-    f(n->key);
+    f(n->key, n->value);
     node_preorder(n->left, f);
     node_preorder(n->right, f);
   }
 }
 
-void tree_preorder(tree *t, void (*f)(int)) {
+void tree_preorder(tree *t, void (*f)(int, int)) {
   node_preorder(t->root, f);
 }
 
-static void node_inorder(node *n, void (*f)(int)) {
+static void node_inorder(node *n, void (*f)(int, int)) {
   if(n) {
     node_inorder(n->left, f);
-    f(n->key);
+    f(n->key, n->value);
     node_inorder(n->right, f);
   }
 }
 
-void tree_inorder(tree *t, void (*f)(int)) {
+void tree_inorder(tree *t, void (*f)(int, int)) {
   node_inorder(t->root, f);
 }
 
-static void node_postorder(node *n, void (*f)(int)) {
+static void node_postorder(node *n, void (*f)(int, int)) {
   if(n) {
     node_postorder(n->left, f);
     node_postorder(n->right, f);
-    f(n->key);
+    f(n->key, n->value);
   }
 }
 
-void tree_postorder(tree *t, void (*f)(int)) {
+void tree_postorder(tree *t, void (*f)(int, int)) {
   node_postorder(t->root, f);
 }
 
@@ -127,6 +130,22 @@ bool tree_has(tree *t, int k) {
   }
 
   return false;
+}
+
+int tree_get(tree *t, int k) {
+  node *n = t->root;
+  while(n) {
+    if(n->key == k) {
+      return n->value;
+    }
+    if(n->key > k) {
+      n = n->left;
+    } else {
+      n = n->right;
+    }
+  }
+
+  return 0;
 }
 
 static int node_size(node *n) {
